@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Экологические челленджи</h2>
+{% if challenges %}
+<div class="list-group">
+  {% for ch in challenges %}
+  <a href="{% url 'challenge_detail' ch.pk %}" class="list-group-item list-group-item-action">
+    <strong>{{ ch.title }}</strong> &ndash; {{ ch.start_date }}
+    <span class="badge bg-secondary float-end">{{ ch.participants.count }} участников</span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<p>Челленджи отсутствуют.</p>
+{% endif %}
+{% endblock %}

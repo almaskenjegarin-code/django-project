@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+  <div class="col-md-5 col-lg-4">
+    <div class="card shadow-lg border-0 rounded-4 glass-card"
+      style="background: rgba(255,255,255,0.85); backdrop-filter: blur(10px);">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+          <div
+            class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm"
+            style="width: 60px; height: 60px;">
+            <i class="bi bi-person-fill fs-2"></i>
+          </div>
+          <h3 class="fw-bold mb-0">С возвращением!</h3>
+          <p class="text-muted small">Войдите, чтобы продолжить зарабатывать EcoCoins</p>
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">Имя пользователя</label>
+            {{ form.username }}
+          </div>
+          <div class="mb-4">
+            <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold">Пароль</label>
+            {{ form.password }}
+          </div>
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold shadow-sm">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Войти
+            </button>
+          </div>
+        </form>
+        <div class="text-center mt-4">
+          <p class="mb-0 text-muted">Нет аккаунта? <a href="{% url 'register' %}"
+              class="text-success fw-bold text-decoration-none">Создать аккаунт</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add bootstrap classes to django form inputs dynamically
+  document.addEventListener("DOMContentLoaded", function () {
+    let inputs = document.querySelectorAll("input");
+    inputs.forEach(input => {
+      if (input.type !== "hidden" && input.type !== "submit") {
+        input.classList.add("form-control", "form-control-lg", "bg-light", "border-0");
+      }
+    });
+  });
+</script>
+{% endblock %}

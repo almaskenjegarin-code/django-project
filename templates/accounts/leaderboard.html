@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center animate__animated animate__fadeInUp">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+            <div class="card-header bg-success text-white text-center py-4 border-0">
+                <i class="bi bi-trophy-fill display-4 mb-2 d-block text-warning"
+                    style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));"></i>
+                <h2 class="fw-bold mb-0">Топ Волонтеров</h2>
+                <p class="mb-0 opacity-75">Лучшие эко-активисты Атырау</p>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for profile in top_users %}
+                    <div
+                        class="list-group-item d-flex align-items-center py-3 px-4 shadow-sm-hover transition-all border-bottom">
+                        <div class="me-4 text-center" style="width: 40px;">
+                            {% if forloop.counter == 1 %}
+                            <i class="bi bi-award-fill fs-2" style="color: #FFD700;"></i>
+                            {% elif forloop.counter == 2 %}
+                            <i class="bi bi-award-fill fs-2" style="color: #C0C0C0;"></i>
+                            {% elif forloop.counter == 3 %}
+                            <i class="bi bi-award-fill fs-2" style="color: #CD7F32;"></i>
+                            {% else %}
+                            <span class="fs-4 fw-bold text-muted">#{{ forloop.counter }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3"
+                            style="width: 50px; height: 50px; border: 2px solid {% if forloop.counter <= 3 %}var(--bs-primary){% else %}transparent{% endif %};">
+                            <span class="fs-5 fw-bold text-success">
+                                {{ profile.user.username|make_list|first|upper }}
+                            </span>
+                        </div>
+
+                        <div class="flex-grow-1">
+                            <h5
+                                class="mb-0 fw-bold {% if user == profile.user %}text-success{% else %}text-dark{% endif %}">
+                                {{ profile.user.username }}
+                                {% if user == profile.user %}
+                                <span class="badge bg-success ms-2 fs-8">Вы</span>
+                                {% endif %}
+                            </h5>
+                        </div>
+
+                        <div class="text-end bg-light rounded-pill px-3 py-1">
+                            <h4 class="mb-0 fw-bold text-success">{{ profile.eco_coins }}</h4>
+                            <small class="text-muted d-block"
+                                style="font-size: 0.7rem; margin-top: -2px;">EcoCoins</small>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="p-5 text-center text-muted">
+                        <i class="bi bi-inbox fs-1 mb-3 d-block"></i>
+                        <p>Рейтинг пока пуст. Станьте первым!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

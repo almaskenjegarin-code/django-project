@@ -1,0 +1,82 @@
+[
+  {
+    "model": "challenges.challenge",
+    "pk": 1,
+    "fields": {
+      "title": "Уборка парка",
+      "description": "Присоединитесь к сообществу по уборке местного парка.",
+      "start_date": "2026-03-01",
+      "end_date": "2026-03-07"
+    }
+  },
+  {
+    "model": "challenges.challenge",
+    "pk": 2,
+    "fields": {
+      "title": "Переработка электроники",
+      "description": "Собирайте и сдавайте старую электронику на переработку.",
+      "start_date": "2026-04-01",
+      "end_date": null
+    }
+  },
+  {
+    "model": "challenges.challenge",
+    "pk": 3,
+    "fields": {
+      "title": "Озеленение улиц",
+      "description": "Посади дерево в своём районе и помоги городу стать зелёнее.",
+      "start_date": "2026-05-01",
+      "end_date": "2026-05-15"
+    }
+  },
+  {
+    "model": "challenges.challenge",
+    "pk": 4,
+    "fields": {
+      "title": "Чистый пляж",
+      "description": "Прими участие в уборке береговой линии и получи виртуальный сертификат.",
+      "start_date": "2026-06-01",
+      "end_date": "2026-06-07"
+    }
+  },
+  {
+    "model": "locations.location",
+    "pk": 1,
+    "fields": {
+      "name": "Главный центр переработки",
+      "address": "ул. Зелёная, 123",
+      "latitude": 55.751244,
+      "longitude": 37.618423
+    }
+  },
+  {
+    "model": "locations.location",
+    "pk": 2,
+    "fields": {
+      "name": "Пункт приёма в парке",
+      "address": "ул. Дерева, 456",
+      "latitude": 55.761244,
+      "longitude": 37.628423
+    }
+  },
+  {
+    "model": "locations.location",
+    "pk": 3,
+    "fields": {
+      "name": "Эко-парк Атырау",
+      "address": "пр. Нефтяников, 10",
+      "latitude": 47.091000,
+      "longitude": 51.891000
+    }
+  },
+  {
+    "model": "locations.location",
+    "pk": 4,
+    "fields": {
+      "name": "Пункт сбора батареек",
+      "address": "ул. Маяковского, 5",
+      "latitude": 47.097500,
+      "longitude": 51.882600
+    }
+  }
+]

@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load l10n %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="m-0">Карта пунктов приёма</h2>
+    <div class="d-flex gap-2">
+        <button id="locate-btn" class="btn btn-outline-success rounded-pill shadow-sm">
+            <i class="bi bi-geo-alt-fill me-1"></i> Найти меня
+        </button>
+    </div>
+</div>
+<div class="mb-3 d-flex flex-wrap gap-2" id="map-filters">
+    <button class="btn btn-sm btn-outline-secondary rounded-pill active" data-filter="all">Все</button>
+    <button class="btn btn-sm btn-outline-primary rounded-pill" data-filter="plastic"><i class="bi bi-cup-straw"></i>
+        Пластик</button>
+    <button class="btn btn-sm btn-outline-info rounded-pill" data-filter="glass"><i class="bi bi-cup"></i>
+        Стекло</button>
+    <button class="btn btn-sm btn-outline-warning text-dark rounded-pill" data-filter="paper"><i
+            class="bi bi-journal-text"></i> Макулатура</button>
+    <button class="btn btn-sm btn-outline-danger rounded-pill" data-filter="batteries"><i
+            class="bi bi-battery-half"></i> Электроника</button>
+</div>
+<div class="card border-0 mb-4 p-2">
+    <div id="map" style="height: 500px; border-radius: 12px; z-index: 1;"></div>
+</div>
+
+<script src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        DG.then(function () {
+            const map = DG.map('map', {
+                center: [47.0975, 51.8826], // Центр Атырау
+                zoom: 12
+            });
+
+            const points = [
+                {% for loc in locations %}
+            {
+                lat: {{ loc.latitude | unlocalize }},
+        lng: {{ loc.longitude | unlocalize }},
+        name: "{{ loc.name|escapejs }}",
+        hours: "{{ loc.working_hours|escapejs }}",
+        accepts: {
+        plastic: {% if loc.accepts_plastic %}true{% else %}false{% endif %},
+        glass: {% if loc.accepts_glass %}true{% else %} false{% endif %},
+    paper: {% if loc.accepts_paper %} true{% else %} false{% endif %},
+    batteries: {% if loc.accepts_batteries %} true{% else %} false{% endif %}
+            }
+            },
+    {% endfor %}
+        ];
+
+    const markers = []; // Store markers for filtering
+
+    // Add regular markers
+    points.forEach(p => {
+        // Build popup content
+        let popupHtml = `<div style="min-width: 200px; color: #fff;">
+            <h6 class="fw-bold mb-1">${p.name}</h6>`;
+
+        if (p.hours) {
+            popupHtml += `<div class="small mb-2" style="color: #ccc;"><i class="bi bi-clock"></i> ${p.hours}</div>`;
+        }
+
+        popupHtml += `<div class="fw-bold small mt-2">Принимает:</div>
+            <ul class="mb-3 ps-3 mt-1" style="font-size: 0.85rem; color: #ccc;">`;
+
+        if (p.accepts.plastic) popupHtml += "<li>Пластик</li>";
+        if (p.accepts.glass) popupHtml += "<li>Стекло</li>";
+        if (p.accepts.paper) popupHtml += "<li>Макулатура</li>";
+        if (p.accepts.batteries) popupHtml += "<li>Отходы электроники</li>";
+        popupHtml += `</ul>
+            
+            <div class="d-grid gap-2">
+                <a href="https://2gis.kz/atyrau/geo/${p.lng},${p.lat}" target="_blank" class="btn btn-sm" style="background-color: #0dcf25; border-color: #0dcf25; color: white;">
+                    <i class="bi bi-geo-alt"></i> Маршрут (2GIS)
+                </a>
+                <div class="d-flex gap-1">
+                    <a href="https://yandex.ru/maps/?pt=${p.lng},${p.lat}&z=18&l=map" target="_blank" class="btn btn-sm btn-light flex-fill" style="font-size: 0.75rem;">Яндекс</a>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" class="btn btn-sm btn-light flex-fill" style="font-size: 0.75rem;">Google</a>
+                </div>
+            </div>
+        </div>`;
+
+        // Determine main category for icon color
+        let iconColor = "#6c757d"; // default gray
+        let iconClass = "bi-recycle"; // default icon
+
+        if (p.accepts.plastic) { iconColor = "#0d6efd"; iconClass = "bi-cup-straw"; }
+        else if (p.accepts.glass) { iconColor = "#0dcaf0"; iconClass = "bi-cup"; }
+        else if (p.accepts.paper) { iconColor = "#ffc107"; iconClass = "bi-journal-text"; }
+        else if (p.accepts.batteries) { iconColor = "#dc3545"; iconClass = "bi-battery-half"; }
+
+        // Create Custom Icon
+        const customIcon = DG.divIcon({
+            className: 'custom-pin',
+            html: `<div style="
+                background-color: ${iconColor};
+                width: 32px; height: 32px;
+                border-radius: 50% 50% 50% 0;
+                transform: rotate(-45deg);
+                box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+                display: flex; align-items: center; justify-content: center;
+                border: 2px solid white;
+            ">
+                <i class="bi ${iconClass} text-white" style="transform: rotate(45deg); font-size: 14px;"></i>
+            </div>`,
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
+
+        // Add Marker
+        const marker = DG.marker([p.lat, p.lng], { icon: customIcon }).bindPopup(popupHtml);
+        marker.pointData = p; // store data on marker
+        markers.push(marker);
+        marker.addTo(map);
+    });
+
+    // Filter Logic
+    const filterBtns = document.querySelectorAll('#map-filters button');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // Update active state
+            filterBtns.forEach(b => b.classList.remove('active', 'text-white'));
+            const target = e.currentTarget;
+            target.classList.add('active');
+            if (target.dataset.filter !== 'all') {
+                target.classList.add('text-white');
+            }
+
+            const filterType = target.dataset.filter;
+
+            markers.forEach(marker => {
+                map.removeLayer(marker); // Remove all first
+                if (filterType === 'all') {
+                    marker.addTo(map);
+                } else if (marker.pointData.accepts[filterType]) {
+                    marker.addTo(map);
+                }
+            });
+        });
+    });
+
+    // Geolocation feature
+    let userMarker = null;
+    let userCircle = null;
+
+    const locateBtn = document.getElementById('locate-btn');
+    locateBtn.addEventListener('click', function () {
+        locateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Ищу...';
+        map.locate({ setView: true, maxZoom: 14 });
+    });
+
+    map.on('locationfound', function (e) {
+        locateBtn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Найдено';
+        locateBtn.classList.remove('btn-outline-success');
+        locateBtn.classList.add('btn-success');
+
+        const radius = e.accuracy / 2;
+        if (userMarker) {
+            map.removeLayer(userMarker);
+            map.removeLayer(userCircle);
+        }
+
+        // Custom icon for user
+        const userIcon = DG.divIcon({
+            className: 'custom-div-icon',
+            html: "<div style='background-color:#10b981; width:16px; height:16px; border-radius:50%; border:3px solid white; box-shadow:0 0 10px rgba(0,0,0,0.5);'></div>",
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+
+        userMarker = DG.marker(e.latlng, { icon: userIcon }).addTo(map)
+            .bindPopup("Вы находитесь здесь").openPopup();
+        userCircle = DG.circle(e.latlng, radius, { color: '#10b981', fillOpacity: 0.1 }).addTo(map);
+
+        setTimeout(() => {
+            locateBtn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i> Найти меня';
+            locateBtn.classList.remove('btn-success');
+            locateBtn.classList.add('btn-outline-success');
+        }, 3000);
+    });
+
+    map.on('locationerror', function (e) {
+        alert("Не удалось определить местоположение: " + e.message);
+        locateBtn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i> Найти меня';
+    });
+        }); // End DG.then
+    });
+</script>
+{% endblock %}
