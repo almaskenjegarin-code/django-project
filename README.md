@@ -1,44 +1,91 @@
-# Платформа экопросвещения
+# ECO-SYSTEM
 
-Этот Django-проект служит основой для платформы экопросвещения: челленджи, сортировка отходов и карта пунктов приёма.
+## Description
+This project is a web application for an eco-awareness platform. It helps manage and track environmental activities, provides information on waste sorting, and offers an interactive map of recycling points.
 
-## Getting started
+## Features
+- User registration
+- Login system
+- Eco-challenges tracking and progress management
+- Interactive recycling points map (integrated with 2GIS)
+- Gamified rewards system and admin panel
 
-1. Activate the virtual environment:
-   ```powershell
-   .\.venv\Scripts\Activate.ps1
-   ```
+## Tech Stack
+- Python (Django)
+- SQLite (for development)
+- HTML, CSS, JavaScript (Bootstrap 5, 2GIS Map API)
 
-2. Install dependencies (if any new):
-   ```powershell
-   pip install -r requirements.txt
-   ```
+## Installation
 
-3. Run migrations:
-   ```powershell
-   python manage.py migrate
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/ECO-SYSTEM.git
+cd ECO-SYSTEM
 
-4. (Optional) create a superuser to access the admin interface:
-   ```powershell
-   python manage.py createsuperuser
-   ```
+# Create and activate virtual environment
+python -m venv .venv
+.\.venv\Scripts\activate
 
-5. Launch the development server:
-   ```powershell
-   python manage.py runserver
-   ```
+# Install dependencies
+pip install -r requirements.txt
 
-Откройте http://127.0.0.1:8000/ чтобы увидеть главную страницу. Вы можете перейти по `/accounts/`, `/challenges/` и `/locations/` для соответствующих разделов. Чтобы загрузить тестовые данные:
+# Apply migrations
+python manage.py migrate
 
-```
+# (Optional) Load initial data
 python manage.py loaddata fixtures/initial_data.json
+
+# Run the development server
+python manage.py runserver
 ```
 
+---
 
-## Структура проекта
+# ИНСТРУКЦИЯ ПОЛЬЗОВАТЕЛЯ
 
-- `accounts`, `challenges`, `locations` — Django-приложения для основных функций.
-- `config` содержит настройки и маршруты проекта.
+## 1. Введение
+Данная система («Платформа экопросвещения ECO-SYSTEM») предназначена для вовлечения граждан в экологические инициативы. Целевая аудитория — люди, интересующиеся экологией, волонтеры, а также все желающие начать сортировать отходы и участвовать в экологических челленджах. Система позволяет отслеживать свой прогресс и находить ближайшие пункты приема вторсырья.
 
-Не стесняйтесь расширять приложения моделями, шаблонами и API по мере необходимости.
+## 2. Требования
+- **Устройство:** Персональный компьютер, ноутбук, планшет или смартфон.
+- **Браузер:** Любой современный веб-браузер (Google Chrome, Firefox, Safari, Edge, Яндекс Браузер) с поддержкой JavaScript.
+- **Условия работы:** Стабильное подключение к сети Интернет.
+
+## 3. Установка и запуск
+Шаги запуска проекта описаны в разделе **Installation** выше.
+Для локального запуска убедитесь, что у вас установлен Python (версии 3.8 или выше). Выполните миграции базы данных и запустите локальный сервер командой `python manage.py runserver`. После запуска перейдите в браузере по адресу `http://127.0.0.1:8000/`.
+
+## 4. Основные функции
+
+### 4.1 Регистрация
+Для начала работы необходимо создать аккаунт. Перейдите на страницу регистрации, введите имя пользователя, электронную почту и надежный пароль, затем нажмите кнопку "Зарегистрироваться".
+![Регистрация](static/img/screenshot_registration.png)
+
+### 4.2 Авторизация
+После регистрации воспользуйтесь страницей входа (Login). Введите свои учетные данные (имя пользователя и пароль) и нажмите "Войти".
+![Авторизация](static/img/screenshot_login.png)
+
+### 4.3 Основной функционал
+Проект предоставляет интерактивную карту для поиска пунктов приема вторсырья, список экологических челленджей за которые можно получать баллы, а также магазин наград.
+- **Карта:** используйте фильтры на карте для поиска пунктов приема нужного типа отходов.
+- **Челленджи и Ресурсы:** отмечайте выполнение задач, пользуйтесь правилами из раздела «Как сортировать» и повышайте свой уровень.
+![Основной функционал](static/img/screenshot_home.png)
+
+## 5. Работа с системой (пошагово)
+- **Шаг 1:** Откройте главную страницу сайта. Зарегистрируйтесь (или войдите в существующий аккаунт) в разделе профиля.
+- **Шаг 2:** Перейдите в раздел "Челленджи" (Challenges), выберите интересующее экологическое задание и начните его выполнение.
+- **Шаг 3:** Перейдите в раздел "Карта" (Locations), чтобы найти ближайший к вам пункт приема перерабатываемых отходов с помощью интерактивной карты.
+- **Шаг 4:** В профиле отслеживайте свой прогресс и обменивайте накопленные эко-баллы на бонусы в разделе "Награды".
+![Карта пунктов](static/img/screenshot_locations.png)
+
+## 6. Частые ошибки
+
+- **Ошибка:** Сервер не запускается, выводится ошибка `ImportError: Couldn't import Django`.
+  - **Решение:** Убедитесь, что вы активировали виртуальное окружение (`.\.venv\Scripts\activate`) и установили все зависимости проекта (`pip install -r requirements.txt`).
+- **Ошибка:** Не отображается интерактивная карта локаций.
+  - **Решение:** Проверьте подключение к Интернету (карта загружается через внешние API 2GIS) и убедитесь, что в браузере не заблокированы скрипты сторонними расширениями (например, AdBlock).
+- **Ошибка:** При открытии карты или челленджей ничего нет.
+  - **Решение:** База данных пуста. Выполните команду `python manage.py loaddata fixtures/initial_data.json` в терминале для загрузки тестовых данных.
+
+## 7. Заключение
+ECO-SYSTEM — это мощный инструмент для развития экологического сознания и реального вклада в защиту окружающей среды. Регулярно участвуя в челленджах и правильно сортируя отходы, каждый пользователь делает мир чище! Использование платформы интуитивно понятно и не требует специальных навыков.
